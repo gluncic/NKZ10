@@ -1,0 +1,14 @@
+{
+  "1111001": {
+    "ime": "Predsjednik/predsjednica Hrvatskoga sabora",
+    "description": "Vodi rad Sabora, predstavlja ga u zemlji i inozemstvu, koordinira zakonodavne aktivnosti."
+  },
+  "1111002": {
+    "ime": "Predsjednik/predsjednica Republike",
+    "description": "Predstavlja državu u međunarodnim odnosima, donosi odluke o obrani i imenovanjima visokih dužnosnika."
+  },
+  "1111003": {
+    "ime": "Zastupnik/zastupnica u Saboru",
+    "description": "Sudjeluje u donošenju zakona, predstavlja građane i njihove interese unutar Hrvatskog sabora."
+  }
+}
