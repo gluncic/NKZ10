@@ -20,4 +20,15 @@ def index(request: Request):
 @app.get("/opis/{code}", response_class=HTMLResponse)
 def get_opis(request: Request, code: str):
     opis = zan_dict[code]["description"]
-    return f"<div class='opis'>{opis}</div>"
+    return f"""
+        <div id='opis-{code}' class='opis' 
+             hx-get='/sakrij/{code}' 
+             hx-trigger='click' 
+             hx-swap='outerHTML'>
+            {opis}
+        </div>
+    """
+
+@app.get("/sakrij/{code}", response_class=HTMLResponse)
+def sakrij_opis(request: Request, code: str):
+    return f"<div id='opis-{code}'></div>"
