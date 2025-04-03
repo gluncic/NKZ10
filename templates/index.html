@@ -16,7 +16,8 @@
         <div class="zanimanje"
              hx-get="/opis/{{ code }}"
              hx-target="#opis-{{ code }}"
-             hx-swap="toggle">
+             hx-swap="outerHTML"
+             hx-trigger="click">
             {{ data.ime }}
         </div>
         <div id="opis-{{ code }}"></div>
