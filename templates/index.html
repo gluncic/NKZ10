@@ -3,84 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <title>NKZ – Zanimanja</title>
-    <!-- CSP meta tag -->
+    <!-- CSP meta tag: dozvoljavamo učitavanje skripti i stilova s 'self' i unpkg.com -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
     <style>
         body {
             font-family: sans-serif;
             margin: 2em;
             background: #f8f8f8;
+            color: black; /* Svi tekstovi crni */
+        }
+        .blok {
+            margin-bottom: 12px;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        /* Prva razina – rod */
+        .rod-container {
+            background-color: #F25022; /* Microsoft narančasti */
+        }
+        .rod-link {
             color: black;
-        }
-        table.zanimanja-table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        table.zanimanja-table td {
-            border: 1px solid #ccc;
-            padding: 4px; /* smanjeno */
-        }
-        /* Rod (prva razina) */
-        .rod-row {
-            background-color: rgba(242,80,34,0.5);
-            font-size: 1.3em;
+            font-size: 1.4em; /* Najveći font */
             font-weight: bold;
+            text-decoration: none;
         }
-        /* Skupina (druga razina) */
-        .group-row {
-            background-color: rgba(0,120,215,0.5);
-            font-size: 1.1em;
+        /* Druga razina – skupina */
+        .skupina-container {
+            background-color: #0078D7; /* Microsoft plavi */
+            margin-left: 20px;
+            padding: 4px;
+        }
+        .skupina-link {
+            color: black;
+            font-size: 1.2em;
             font-weight: bold;
+            text-decoration: none;
         }
-        /* Zanimanje (treća razina) */
-        .occupation-row {
-            background-color: #ffffff;
+        /* Treća razina – zanimanje */
+        .zanimanje-container {
+            background-color: #FFFFFF; /* Bijela */
+            margin-left: 40px;
+            padding: 4px;
+        }
+        .zanimanje-link {
+            color: black;
             font-size: 1em;
+            text-decoration: none;
         }
+        /* Opis zanimanja */
         .opis {
-            margin-top: 6px;
+            margin-left: 60px;
+            margin-top: 5px;
             background: #f0f0f0;
             padding: 10px;
             font-style: italic;
             border-radius: 5px;
-        }
-        a {
-            text-decoration: none;
             color: black;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin: 4px 0;
         }
     </style>
 </head>
 <body>
-    <h1>Tablični prikaz NKZ</h1>
-    
-    <table class="zanimanja-table">
-      <tbody>
-        {% for item in rods %}
-          <!-- Inicijalno, za svaki rod je jedan redak -->
-          <tr id="rod-{{ item.slug }}" class="rod-row">
-            <td>
-              <a href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#rod-{{ item.slug }}" hx-swap="outerHTML">
+    <h1>Nacionalna klasifikacija zanimanja</h1>
+    {% for item in rods %}
+        <div class="blok rod-container" id="rod-{{ item.slug }}">
+            <a class="rod-link"
+               href="#"
+               hx-get="/skupine/{{ item.slug }}"
+               hx-target="#rod-{{ item.slug }}"
+               hx-swap="outerHTML">
                 {{ item.rod }}
-              </a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    
-    <br>
-    <!-- Minimalni test -->
-    <table class="zanimanja-table">
-      <tbody id="test-tbody">
-        <tr>
-          <td>
-            <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="afterbegin">
-              Minimalni test
             </a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        </div>
+    {% endfor %}
+    
+    <!-- Minimalni test htmx link -->
+    <div class="blok" id="test">
+      <a href="#" hx-get="/test" hx-target="#test" hx-swap="outerHTML">Minimalni test</a>
+    </div>
     
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <script>
@@ -88,3 +94,4 @@
     </script>
 </body>
 </html>
+
