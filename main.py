@@ -17,18 +17,35 @@ with open("NKZ_descriptions_chatGPT4omini.json", encoding="utf-8") as f:
 def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "zanimanja": zan_dict})
 
-@app.get("/opis/{code}", response_class=HTMLResponse)
-def get_opis(request: Request, code: str):
+@app.get("/toggle/{code}", response_class=HTMLResponse)
+def toggle_opis(request: Request, code: str):
     opis = zan_dict[code]["description"]
+    ime = zan_dict[code]["ime"]
+
     return f"""
-        <div id='opis-{code}' class='opis' 
-             hx-get='/sakrij/{code}' 
-             hx-trigger='click' 
-             hx-swap='outerHTML'>
-            {opis}
+    <div id="blok-{code}" class="zanimanje-blok">
+        <div class="zanimanje"
+             hx-get="/sakrij/{code}"
+             hx-target="#blok-{code}"
+             hx-swap="outerHTML"
+             hx-trigger="click">
+            {ime}
         </div>
+        <div id="opis-{code}" class="opis">{opis}</div>
+    </div>
     """
 
 @app.get("/sakrij/{code}", response_class=HTMLResponse)
 def sakrij_opis(request: Request, code: str):
-    return f"<div id='opis-{code}'></div>"
+    ime = zan_dict[code]["ime"]
+    return f"""
+    <div id="blok-{code}" class="zanimanje-blok">
+        <div class="zanimanje"
+             hx-get="/toggle/{code}"
+             hx-target="#blok-{code}"
+             hx-swap="outerHTML"
+             hx-trigger="click">
+            {ime}
+        </div>
+    </div>
+    """
