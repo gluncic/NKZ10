@@ -12,7 +12,7 @@ templates = Jinja2Templates(directory="templates")
 
 def slugify(value: str) -> str:
     """
-    Normalizira tekst, uklanja dijakritike i nealfanumeričke znakove te zamjenjuje razmake s crticama.
+    Normalizira tekst, uklanja dijakritike, nealfanumeričke znakove i zamjenjuje razmake s crticama.
     Vraća niz s malim slovima.
     """
     value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
@@ -36,9 +36,7 @@ def get_skupina_by_slug(slug: str) -> str:
 with open("NKZ_descriptions_chatGPT4omini.json", encoding="utf-8") as f:
     zan_dict = json.load(f)
 
-# Grupiranje podataka:
-# - rodovi: { rod: set(skupina, ...), ... }
-# - skupine: { skupina: [ { "sifra": ..., "ime": ... }, ... ], ... }
+# Grupiranje podataka: mapiramo rod na skupine, a skupina na zanimanja
 rodovi = {}
 skupine = {}
 
@@ -51,9 +49,9 @@ for sifra, data in zan_dict.items():
         "ime": data["ime"]
     })
 
-# Početna stranica: prikazuje samo rodove
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
+    # Za svaki rod spremamo originalnu vrijednost, slug i popis skupina (koji se samo prosljeđuje predlošku)
     rods = []
     for rod, skupina_set in rodovi.items():
         rods.append({
@@ -64,134 +62,86 @@ def index(request: Request):
     rods.sort(key=lambda x: x["rod"])
     return templates.TemplateResponse("index.html", {"request": request, "rods": rods})
 
-# Ekspanzija 1: Klik na rod otvara skupine
 @app.get("/skupine/{rod_slug}", response_class=HTMLResponse)
-def prikazi_skupine(request: Request, rod_slug: str):
+def skupine_rod(request: Request, rod_slug: str):
     rod = get_rod_by_slug(rod_slug)
     if not rod:
         raise HTTPException(status_code=404, detail="Rod nije pronađen")
     skupine_lista = sorted(list(rodovi.get(rod, [])))
-    # Prvi redak – rod (ostaje, ali se koristi za "sakrij")
-    html = f"""
-    <tr id="rod-{rod_slug}" class="rod-row">
-      <td>
-        <a href="#" hx-get="/sakrij-rod/{rod_slug}" hx-target="#rod-{rod_slug}" hx-swap="outerHTML">
-           {rod}
-        </a>
-      </td>
-    </tr>
-    """
-    # Svaki redak za skupinu: uvlačenje za jedan prazan znak (&nbsp;)
+    html = f"<div class='blok rod-container' id='rod-{rod_slug}'>"
+    # Link za rod (prva razina)
+    html += f'<a class="rod-link" href="#" hx-get="/sakrij-rod/{rod_slug}" hx-target="#rod-{rod_slug}" hx-swap="outerHTML">{rod}</a>'
+    html += "<ul>"
     for skupina in skupine_lista:
         skupina_slug = slugify(skupina)
-        html += f"""
-        <tr id="skupina-{skupina_slug}" class="group-row">
-          <td>&nbsp;
-            <a href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">
-               {skupina}
-            </a>
-          </td>
-        </tr>
-        """
+        # Omotavamo link za skupinu u div sa specifičnom klasom
+        html += f'<li><div id="skupina-{skupina_slug}" class="skupina-container">'
+        html += f'<a class="skupina-link" href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
+        html += "</div></li>"
+    html += "</ul></div>"
     return html
 
-# Vraćanje rodovog retka (sakrij skupine)
 @app.get("/sakrij-rod/{rod_slug}", response_class=HTMLResponse)
 def sakrij_rod(request: Request, rod_slug: str):
     rod = get_rod_by_slug(rod_slug)
     if not rod:
         raise HTTPException(status_code=404, detail="Rod nije pronađen")
-    return f"""
-    <tr id="rod-{rod_slug}" class="rod-row">
-      <td>
-        <a href="#" hx-get="/skupine/{rod_slug}" hx-target="#rod-{rod_slug}" hx-swap="outerHTML">
-           {rod}
-        </a>
-      </td>
-    </tr>
-    """
+    html = f"<div class='blok rod-container' id='rod-{rod_slug}'>"
+    html += f'<a class="rod-link" href="#" hx-get="/skupine/{rod_slug}" hx-target="#rod-{rod_slug}" hx-swap="outerHTML">{rod}</a>'
+    html += "</div>"
+    return html
 
-# Ekspanzija 2: Klik na skupinu otvara zanimanja
 @app.get("/zanimanja/{skupina_slug}", response_class=HTMLResponse)
-def prikazi_zanimanja(request: Request, skupina_slug: str):
+def zanimanja_skupina(request: Request, skupina_slug: str):
     skupina = get_skupina_by_slug(skupina_slug)
     if not skupina:
         raise HTTPException(status_code=404, detail="Skupina nije pronađena")
-    lista_zanimanja = skupine.get(skupina, [])
-    # Prvi redak – skupina (s indentom od jednog prazanog znaka)
-    html = f"""
-    <tr id="skupina-{skupina_slug}" class="group-row">
-      <td>&nbsp;
-        <a href="#" hx-get="/sakrij-skupinu/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">
-           {skupina}
-        </a>
-      </td>
-    </tr>
-    """
-    # Za svako zanimanje: uvuci za još jedan prazan znak (dakle, dva &nbsp; ukupno)
-    for z in lista_zanimanja:
+    zanimanja = skupine.get(skupina, [])
+    html = f"<div class='blok skupina-container' id='skupina-{skupina_slug}'>"
+    # Link za skupinu (druga razina)
+    html += f'<a class="skupina-link" href="#" hx-get="/sakrij-skupinu/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
+    html += "<ul>"
+    for z in zanimanja:
         sifra = z["sifra"]
         ime = z["ime"]
-        html += f"""
-        <tr id="blok-{sifra}" class="occupation-row">
-          <td>&nbsp;&nbsp;{sifra} {ime}
-            <a href="#" style="display:none;"></a>
-          </td>
-        </tr>
-        """
+        # Omotavamo link zanimanja u div sa specifičnom klasom
+        html += f'<li><div id="blok-{sifra}" class="zanimanje-container">'
+        html += f'<a class="zanimanje-link" href="#" hx-get="/toggle/{sifra}" hx-target="#blok-{sifra}" hx-swap="outerHTML">{ime}</a>'
+        html += "</div></li>"
+    html += "</ul></div>"
     return html
 
-# Vraćanje skupinog retka (sakrij zanimanja)
 @app.get("/sakrij-skupinu/{skupina_slug}", response_class=HTMLResponse)
 def sakrij_skupinu(request: Request, skupina_slug: str):
     skupina = get_skupina_by_slug(skupina_slug)
     if not skupina:
         raise HTTPException(status_code=404, detail="Skupina nije pronađena")
-    return f"""
-    <tr id="skupina-{skupina_slug}" class="group-row">
-      <td>&nbsp;
-        <a href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">
-           {skupina}
-        </a>
-      </td>
-    </tr>
-    """
+    html = f"<div class='blok skupina-container' id='skupina-{skupina_slug}'>"
+    html += f'<a class="skupina-link" href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
+    html += "</div>"
+    return html
 
-# Ekspanzija 3: Klik na zanimanje otvara opis zanimanja
 @app.get("/toggle/{code}", response_class=HTMLResponse)
 def toggle_opis(request: Request, code: str):
     if code not in zan_dict:
         raise HTTPException(status_code=404, detail="Zanimanje nije pronađeno")
     opis = zan_dict[code]["description"]
     ime = zan_dict[code]["ime"]
-    return f"""
-    <tr id="blok-{code}" class="occupation-row">
-      <td>&nbsp;&nbsp;
-        <a href="#" hx-get="/sakrij/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">
-           {code} {ime}
-        </a>
-        <div class="opis">{opis}</div>
-      </td>
-    </tr>
-    """
+    html = f"<div class='zanimanje-blok zanimanje-container' id='blok-{code}'>"
+    html += f'<a class="zanimanje-link" href="#" hx-get="/sakrij/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a>'
+    html += f"<div class='opis'>{opis}</div></div>"
+    return html
 
-# Vraćanje zanimanja (sakrij opis)
 @app.get("/sakrij/{code}", response_class=HTMLResponse)
 def sakrij_opis(request: Request, code: str):
     if code not in zan_dict:
         raise HTTPException(status_code=404, detail="Zanimanje nije pronađeno")
     ime = zan_dict[code]["ime"]
-    return f"""
-    <tr id="blok-{code}" class="occupation-row">
-      <td>&nbsp;&nbsp;
-        <a href="#" hx-get="/toggle/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">
-           {code} {ime}
-        </a>
-      </td>
-    </tr>
-    """
+    html = f"<div class='zanimanje-blok zanimanje-container' id='blok-{code}'>"
+    html += f'<a class="zanimanje-link" href="#" hx-get="/toggle/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a>'
+    html += "</div>"
+    return html
 
-# Minimalni test endpoint
 @app.get("/test", response_class=HTMLResponse)
 def test(request: Request):
-    return "<tr><td>Test uspješan!</td></tr>"
+    return "<div id='output'>Test uspješan!</div>"
