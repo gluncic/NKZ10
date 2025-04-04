@@ -5,22 +5,45 @@
     <title>Popis zanimanja</title>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <style>
-        body { font-family: sans-serif; margin: 2em; background: #f8f8f8; }
-        .zanimanje { cursor: pointer; margin: 8px 0; font-weight: bold; }
-        .opis { margin-left: 20px; margin-bottom: 10px; font-style: italic; background: #f4f4f4; padding: 10px; border-radius: 5px; }
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+            background: #f8f8f8;
+        }
+
+        .zanimanje-blok {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .zanimanje {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px;
+        }
+
+        .opis {
+            margin-left: 20px;
+            margin-top: 5px;
+            background: #f0f0f0;
+            padding: 10px;
+            font-style: italic;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <h1>Popis zanimanja</h1>
     {% for code, data in zanimanja.items() %}
-        <div class="zanimanje"
-             hx-get="/opis/{{ code }}"
-             hx-target="#opis-{{ code }}"
-             hx-swap="outerHTML"
-             hx-trigger="click">
-            {{ data.ime }}
+        <div id="blok-{{ code }}" class="zanimanje-blok">
+            <div class="zanimanje"
+                 hx-get="/toggle/{{ code }}"
+                 hx-target="#blok-{{ code }}"
+                 hx-swap="outerHTML"
+                 hx-trigger="click">
+                {{ data.ime }}
+            </div>
         </div>
-        <div id="opis-{{ code }}"></div>
     {% endfor %}
 </body>
 </html>
