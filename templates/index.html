@@ -1,101 +1,88 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-    <meta charset="UTF-8">
-    <title>NKZ – Zanimanja (Tablični prikaz)</title>
-    <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self' https://unpkg.com; 
-                   script-src 'self' 'unsafe-inline' https://unpkg.com; 
-                   style-src 'self' 'unsafe-inline';">
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 2em;
-            background: #f8f8f8;
-            color: black;
-        }
-        table.zanimanja-table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        table.zanimanja-table th,
-        table.zanimanja-table td {
-            border: 1px solid #ccc;
-            padding: 8px;
-        }
-        /* Rod - prva razina */
-        .rod-row {
-            background-color: #F25022;
-            font-size: 1.3em;
-            font-weight: bold;
-        }
-        /* Skupina - druga razina */
-        .group-row {
-            background-color: #0078D7;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-        /* Zanimanje - treća razina */
-        .occupation-row {
-            background-color: #ffffff;
-            font-size: 1em;
-        }
-        .opis {
-            margin-top: 6px;
-            background: #f0f0f0;
-            padding: 10px;
-            font-style: italic;
-            border-radius: 5px;
-        }
-        a {
-            text-decoration: none;
-            color: black;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>NKZ – Zanimanja (Tablični prikaz)</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2em;
+      background: #f8f8f8;
+      color: black;
+    }
+    table.zanimanja-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    table.zanimanja-table th,
+    table.zanimanja-table td {
+      border: 1px solid #ccc;
+      padding: 4px;
+    }
+    /* Rod */
+    .rod-row {
+      background-color: rgba(242,80,34,0.5);
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+    /* Skupina */
+    .group-row {
+      background-color: rgba(0,120,215,0.5);
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    /* Zanimanje */
+    .occupation-row {
+      background-color: #ffffff;
+      font-size: 1em;
+    }
+    .opis {
+      margin-top: 6px;
+      background: #f0f0f0;
+      padding: 10px;
+      font-style: italic;
+      border-radius: 5px;
+    }
+    a {
+      text-decoration: none;
+      color: black;
+    }
+  </style>
 </head>
 <body>
-    <h1>Tablični prikaz NKZ</h1>
-    
-    <table class="zanimanja-table">
-      <thead>
-        <tr>
-          <th style="width: 15%;">Šifra</th>
-          <th>Naziv</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in rods %}
-          <tr id="rod-{{ item.slug }}" class="rod-row">
+  <h1>Tablični prikaz NKZ</h1>
+  <table class="zanimanja-table">
+    <tbody>
+      {% for item in rods %}
+        <tbody id="tbody-{{ item.slug }}">
+          <tr class="rod-row">
             <td></td>
             <td>
-              <a href="#"
-                 hx-get="/skupine/{{ item.slug }}"
-                 hx-target="#rod-{{ item.slug }}"
-                 hx-swap="outerHTML">
-                 {{ item.rod }}
+              <a href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#tbody-{{ item.slug }}" hx-swap="innerHTML">
+                {{ item.rod }}
               </a>
             </td>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    
-    <br>
-    <table class="zanimanja-table">
-      <tbody id="test-tbody">
-        <tr>
-          <td colspan="2">
-            <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="afterbegin">
-              Minimalni test
-            </a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
-    <script>
-      console.log("htmx:", window.htmx);
-    </script>
+        </tbody>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br>
+  <table class="zanimanja-table">
+    <tbody id="test-tbody">
+      <tr>
+        <td colspan="2">
+          <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="afterbegin">
+            Minimalni test
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <script>
+    console.log("htmx:", window.htmx);
+  </script>
 </body>
 </html>
