@@ -11,12 +11,11 @@
       background: #f8f8f8;
       color: black;
     }
-    table.zanimanja-table {
+    table {
       border-collapse: collapse;
       width: 100%;
     }
-    table.zanimanja-table th,
-    table.zanimanja-table td {
+    td {
       border: 1px solid #ccc;
       padding: 4px;
     }
@@ -33,10 +32,6 @@
       font-weight: bold;
     }
     /* Zanimanje */
-    .occupation-row {
-      background-color: #ffffff;
-      font-size: 1em;
-    }
     .opis {
       margin-top: 6px;
       background: #f0f0f0;
@@ -51,24 +46,26 @@
   </style>
 </head>
 <body>
-  <h1>Tablični prikaz NKZ</h1>
-  <table class="zanimanja-table">
-    <tbody>
+  <h1>NKZ – Tablični prikaz (jedan stupac)</h1>
+  <table>
+    <tbody id="main-tbody">
       {% for item in rods %}
-        <tbody id="tbody-{{ item.slug }}">
-          <tr class="rod-row">
-            <td>
-              <a href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#tbody-{{ item.slug }}" hx-swap="innerHTML">
-                {{ item.rod }}
-              </a>
-            </td>
-          </tr>
-        </tbody>
+      <tr id="rod-{{ item.slug }}" class="rod-row">
+        <td>
+          <a href="#"
+             hx-get="/expand-rod/{{ item.slug }}"
+             hx-target="#rod-{{ item.slug }}"
+             hx-swap="afterend">
+            {{ item.rod }}
+          </a>
+        </td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>
+
   <br>
-  <table class="zanimanja-table">
+  <table>
     <tbody id="test-tbody">
       <tr>
         <td>
@@ -79,6 +76,7 @@
       </tr>
     </tbody>
   </table>
+
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
   <script>
     console.log("htmx:", window.htmx);
