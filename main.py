@@ -1,4 +1,3 @@
-# main.py
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -18,10 +17,17 @@ rodovi = {}
 skupine = {}
 
 for sifra, data in zan_dict.items():
+    if "rod" not in data or "skupina" not in data:
+        print(f"UPOZORENJE: zapis {sifra} nema rod ili skupinu")
+        continue
+
     rod = data["rod"]
     skupina = data["skupina"]
     rodovi.setdefault(rod, set()).add(skupina)
-    skupine.setdefault(skupina, []).append({"sifra": sifra, "ime": data["ime"]})
+    skupine.setdefault(skupina, []).append({
+        "sifra": sifra,
+        "ime": data["ime"]
+    })
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
