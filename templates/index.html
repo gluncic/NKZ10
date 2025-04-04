@@ -10,32 +10,26 @@
             margin: 2em;
             background: #f8f8f8;
         }
-
         .blok {
             margin-bottom: 12px;
             padding-bottom: 8px;
             border-bottom: 1px solid #ddd;
         }
-
         .rod, .skupina, .zanimanje {
             cursor: pointer;
             font-weight: bold;
             padding: 6px;
         }
-
         .rod {
             color: #003366;
         }
-
         .skupina {
             margin-left: 20px;
             color: #005c99;
         }
-
         .zanimanje {
             margin-left: 40px;
         }
-
         .opis {
             margin-left: 60px;
             margin-top: 5px;
@@ -48,14 +42,12 @@
 </head>
 <body>
     <h1>Nacionalna klasifikacija zanimanja</h1>
-
     {% for rod, skupine in rodovi.items() %}
-        <div id="rod-{{ rod | urlencode }}" class="blok">
+        <div id="rod-{{ rod }}" class="blok">
             <div class="rod"
-                 hx-get="/skupine/{{ rod | urlencode }}"
-                 hx-target="#rod-{{ rod | urlencode }}"
-                 hx-swap="outerHTML"
-                 hx-trigger="click">
+                 hx-get="/skupine/{{ rod }}"
+                 hx-target="#rod-{{ rod }}"
+                 hx-swap="outerHTML">
                 {{ rod }}
             </div>
         </div>
