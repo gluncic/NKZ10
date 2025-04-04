@@ -5,7 +5,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import json
-#7
+#8 radi samo za rodove
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -18,14 +18,12 @@ def slugify(value: str) -> str:
     return value
 
 def get_rod_by_slug(slug: str) -> str:
-    # Pretražujemo rodove i vraćamo originalnu vrijednost ako slug odgovara
     for rod in rodovi:
         if slugify(rod) == slug:
             return rod
     return None
 
 def get_skupina_by_slug(slug: str) -> str:
-    # Pretražujemo skupine i vraćamo originalnu vrijednost ako slug odgovara
     for skupina in skupine:
         if slugify(skupina) == slug:
             return skupina
@@ -50,7 +48,6 @@ for sifra, data in zan_dict.items():
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
-    # Za svaki rod spremamo originalnu vrijednost i slug
     rods = []
     for rod, skupina_set in rodovi.items():
         rods.append({
@@ -72,7 +69,10 @@ def skupine_rod(request: Request, rod_slug: str):
     html += "<ul>"
     for skupina in skupine_lista:
         skupina_slug = slugify(skupina)
-        html += f'<li><a href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a></li>'
+        # Omotavamo link unutar div-a s id-em koji će biti hx-target
+        html += f'<li><div id="skupina-{skupina_slug}">'
+        html += f'<a href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
+        html += "</div></li>"
     html += "</ul></div>"
     return html
 
