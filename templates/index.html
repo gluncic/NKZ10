@@ -16,8 +16,8 @@
 <body>
     <h1>Nacionalna klasifikacija zanimanja</h1>
     {% for item in rods %}
-        <div class="blok" id="rod-{{ item.encoded }}">
-            <a href="#" hx-get="/skupine/{{ item.encoded }}" hx-target="#rod-{{ item.encoded }}" hx-swap="outerHTML">
+        <div class="blok" id="rod-{{ item.slug }}">
+            <a href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#rod-{{ item.slug }}" hx-swap="outerHTML">
                 {{ item.rod }}
             </a>
         </div>
