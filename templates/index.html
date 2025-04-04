@@ -2,7 +2,7 @@
 <html lang="hr">
 <head>
   <meta charset="UTF-8">
-  <title>NKZ – Zanimanja (Tablični prikaz)</title>
+  <title>NKZ – Zanimanja</title>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
   <style>
     body {
@@ -53,17 +53,10 @@
 <body>
   <h1>Tablični prikaz NKZ</h1>
   <table class="zanimanja-table">
-    <thead>
-      <tr>
-        <th style="width: 9ch;">Šifra</th>
-        <th>Naziv</th>
-      </tr>
-    </thead>
     <tbody>
       {% for item in rods %}
         <tbody id="tbody-{{ item.slug }}">
           <tr class="rod-row">
-            <td></td>
             <td>
               <a href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#tbody-{{ item.slug }}" hx-swap="innerHTML">
                 {{ item.rod }}
@@ -78,7 +71,7 @@
   <table class="zanimanja-table">
     <tbody id="test-tbody">
       <tr>
-        <td colspan="2">
+        <td>
           <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="afterbegin">
             Minimalni test
           </a>
