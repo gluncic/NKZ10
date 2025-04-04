@@ -1,14 +1,50 @@
 {
   "1111001": {
     "ime": "Predsjednik/predsjednica Hrvatskoga sabora",
-    "description": "Vodi rad Sabora, predstavlja ga u zemlji i inozemstvu, koordinira zakonodavne aktivnosti."
+    "description": "Predsjednik Hrvatskoga sabora vodi rad Sabora, predstavlja ga u zemlji i inozemstvu te osigurava ustavnost i zakonitost njegovog djelovanja.",
+    "rod": "Zakonodavci, dužnosnici i direktori",
+    "skupina": "Zakonodavci"
   },
-  "1111002": {
-    "ime": "Predsjednik/predsjednica Republike",
-    "description": "Predstavlja državu u međunarodnim odnosima, donosi odluke o obrani i imenovanjima visokih dužnosnika."
+  "1112001": {
+    "ime": "Guverner/guvernerka Hrvatske narodne banke",
+    "description": "Guverner vodi i nadzire monetarnu politiku, regulira bankarski sektor i predstavlja HNB u međunarodnim financijskim institucijama.",
+    "rod": "Zakonodavci, dužnosnici i direktori",
+    "skupina": "Dužnosnici tijela državne vlasti"
   },
-  "1111003": {
-    "ime": "Zastupnik/zastupnica u Saboru",
-    "description": "Sudjeluje u donošenju zakona, predstavlja građane i njihove interese unutar Hrvatskog sabora."
+  "1211001": {
+    "ime": "Izvršni direktor/izvršna direktorica",
+    "description": "Izvršni direktor upravlja strateškim i operativnim poslovanjem organizacije, nadgleda timove i donosi ključne poslovne odluke.",
+    "rod": "Zakonodavci, dužnosnici i direktori",
+    "skupina": "Direktori i upravitelji"
+  },
+  "2411001": {
+    "ime": "Računovođa",
+    "description": "Računovođe vode financijske evidencije, izrađuju izvještaje i osiguravaju usklađenost s financijskim propisima.",
+    "rod": "Stručnjaci",
+    "skupina": "Stručnjaci za ekonomiju i računovodstvo"
+  },
+  "2412001": {
+    "ime": "Revizor/revizorica",
+    "description": "Revizori analiziraju i provjeravaju financijske izvještaje i poslovanje radi osiguravanja točnosti i zakonitosti.",
+    "rod": "Stručnjaci",
+    "skupina": "Stručnjaci za ekonomiju i računovodstvo"
+  },
+  "3115001": {
+    "ime": "Tehničar za građevinarstvo",
+    "description": "Tehničar za građevinarstvo asistira u projektiranju, nadzoru i dokumentiranju građevinskih radova.",
+    "rod": "Tehničari i stručni suradnici",
+    "skupina": "Građevinski tehničari"
+  },
+  "7223001": {
+    "ime": "Zavarivač/zavarivačica",
+    "description": "Zavarivači spajaju metalne dijelove korištenjem topline, rukovanjem specijaliziranom opremom prema tehničkim nacrtima.",
+    "rod": "Zanimanja u obrtu i pojedinačnoj proizvodnji",
+    "skupina": "Metalostrugari, tokari, zavarivači"
+  },
+  "9311001": {
+    "ime": "Građevinski pomoćni radnik/radnica",
+    "description": "Građevinski pomoćni radnici obavljaju osnovne fizičke zadatke na gradilištima pod nadzorom građevinskih radnika.",
+    "rod": "Jednostavna zanimanja",
+    "skupina": "Pomoćni građevinski radnici"
   }
 }
