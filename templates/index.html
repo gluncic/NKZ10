@@ -3,28 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>NKZ – Zanimanja</title>
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <!-- Dodajemo defer kako bismo osigurali da se htmx učita nakon sadržaja stranice -->
+    <script defer src="https://unpkg.com/htmx.org@1.9.2"></script>
     <style>
         body { font-family: sans-serif; margin: 2em; background: #f8f8f8; }
         .blok { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
-        .rod, .skupina, .zanimanje { cursor: pointer; font-weight: bold; padding: 6px; }
-        .rod { color: #003366; }
-        .skupina { margin-left: 20px; color: #005c99; }
-        .zanimanje { margin-left: 40px; }
-        .opis { margin-left: 60px; margin-top: 5px; background: #f0f0f0; padding: 10px; font-style: italic; border-radius: 5px; }
+        a { cursor: pointer; text-decoration: none; font-weight: bold; padding: 6px; display: block; }
+        ul { list-style-type: none; padding-left: 20px; }
+        .opis { margin-left: 20px; margin-top: 5px; background: #f0f0f0; padding: 10px; font-style: italic; border-radius: 5px; }
     </style>
 </head>
 <body>
     <h1>Nacionalna klasifikacija zanimanja</h1>
     {% for item in rods %}
-        <div id="rod-{{ item.encoded }}" class="blok">
-            <div class="rod"
-                 hx-get="/skupine/{{ item.encoded }}"
-                 hx-target="#rod-{{ item.encoded }}"
-                 hx-swap="outerHTML"
-                 hx-trigger="click">
+        <div class="blok" id="rod-{{ item.encoded }}">
+            <a href="javascript:void(0)" 
+               hx-get="/skupine/{{ item.encoded }}" 
+               hx-target="#rod-{{ item.encoded }}" 
+               hx-swap="outerHTML">
                 {{ item.rod }}
-            </div>
+            </a>
         </div>
     {% endfor %}
 </body>
