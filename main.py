@@ -51,9 +51,11 @@ for sifra, data in zan_dict.items():
         "ime": data["ime"]
     })
 
-# Početna stranica: prikazuje samo rodove
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
+    """
+    Početna stranica – prikazuje tablični prikaz s redcima za svaki rod.
+    """
     rods = []
     for rod, skupina_set in rodovi.items():
         rods.append({
@@ -71,7 +73,6 @@ def prikazi_skupine(request: Request, rod_slug: str):
     if not rod:
         raise HTTPException(status_code=404, detail="Rod nije pronađen")
     skupine_lista = sorted(list(rodovi.get(rod, [])))
-    # Prvi redak – rod (ostaje, ali se koristi za "sakrij")
     html = f"""
     <tr id="rod-{rod_slug}" class="rod-row">
       <td>
@@ -81,7 +82,6 @@ def prikazi_skupine(request: Request, rod_slug: str):
       </td>
     </tr>
     """
-    # Svaki redak za skupinu: uvlačenje za jedan prazan znak (&nbsp;)
     for skupina in skupine_lista:
         skupina_slug = slugify(skupina)
         html += f"""
@@ -118,7 +118,6 @@ def prikazi_zanimanja(request: Request, skupina_slug: str):
     if not skupina:
         raise HTTPException(status_code=404, detail="Skupina nije pronađena")
     lista_zanimanja = skupine.get(skupina, [])
-    # Prvi redak – skupina (s indentom od jednog prazanog znaka)
     html = f"""
     <tr id="skupina-{skupina_slug}" class="group-row">
       <td>&nbsp;
@@ -128,14 +127,15 @@ def prikazi_zanimanja(request: Request, skupina_slug: str):
       </td>
     </tr>
     """
-    # Za svako zanimanje: uvuci za još jedan prazan znak (dakle, dva &nbsp; ukupno)
     for z in lista_zanimanja:
         sifra = z["sifra"]
         ime = z["ime"]
         html += f"""
         <tr id="blok-{sifra}" class="occupation-row">
-          <td>&nbsp;&nbsp;{sifra} {ime}
-            <a href="#" style="display:none;"></a>
+          <td>&nbsp;&nbsp;
+            <a href="#" hx-get="/toggle/{sifra}" hx-target="#blok-{sifra}" hx-swap="outerHTML">
+              {sifra} {ime}
+            </a>
           </td>
         </tr>
         """
@@ -168,7 +168,7 @@ def toggle_opis(request: Request, code: str):
     <tr id="blok-{code}" class="occupation-row">
       <td>&nbsp;&nbsp;
         <a href="#" hx-get="/sakrij/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">
-           {code} {ime}
+          {code} {ime}
         </a>
         <div class="opis">{opis}</div>
       </td>
@@ -185,13 +185,12 @@ def sakrij_opis(request: Request, code: str):
     <tr id="blok-{code}" class="occupation-row">
       <td>&nbsp;&nbsp;
         <a href="#" hx-get="/toggle/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">
-           {code} {ime}
+          {code} {ime}
         </a>
       </td>
     </tr>
     """
 
-# Minimalni test endpoint
 @app.get("/test", response_class=HTMLResponse)
 def test(request: Request):
     return "<tr><td>Test uspješan!</td></tr>"
