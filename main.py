@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import json
 from urllib.parse import quote, unquote
-#5
+#6
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -54,4 +54,55 @@ def skupine_rod(request: Request, rod: str):
     return html
 
 @app.get("/sakrij-rod/{rod}", response_class=HTMLResponse)
-def sakrij
+def sakrij_rod(request: Request, rod: str):
+    rod = unquote(rod)
+    rod_enc = quote(rod)
+    html = f"<div class='blok' id='rod-{rod_enc}'>"
+    html += f'<a href="#" hx-get="/skupine/{rod_enc}" hx-target="#rod-{rod_enc}" hx-swap="outerHTML">{rod}</a>'
+    html += "</div>"
+    return html
+
+@app.get("/zanimanja/{skupina}", response_class=HTMLResponse)
+def zanimanja_skupina(request: Request, skupina: str):
+    skupina = unquote(skupina)
+    skupina_enc = quote(skupina)
+    zanimanja = skupine.get(skupina, [])
+    html = f"<div class='blok' id='skupina-{skupina_enc}'>"
+    html += f'<a href="#" hx-get="/sakrij-skupinu/{skupina_enc}" hx-target="#skupina-{skupina_enc}" hx-swap="outerHTML">{skupina}</a>'
+    html += "<ul>"
+    for z in zanimanja:
+        sifra = z["sifra"]
+        ime = z["ime"]
+        html += f'<li><a href="#" hx-get="/toggle/{sifra}" hx-target="#blok-{sifra}" hx-swap="outerHTML">{ime}</a></li>'
+    html += "</ul></div>"
+    return html
+
+@app.get("/sakrij-skupinu/{skupina}", response_class=HTMLResponse)
+def sakrij_skupinu(request: Request, skupina: str):
+    skupina = unquote(skupina)
+    skupina_enc = quote(skupina)
+    html = f"<div class='blok' id='skupina-{skupina_enc}'>"
+    html += f'<a href="#" hx-get="/zanimanja/{skupina_enc}" hx-target="#skupina-{skupina_enc}" hx-swap="outerHTML">{skupina}</a>'
+    html += "</div>"
+    return html
+
+@app.get("/toggle/{code}", response_class=HTMLResponse)
+def toggle_opis(request: Request, code: str):
+    opis = zan_dict[code]["description"]
+    ime = zan_dict[code]["ime"]
+    html = f"<div class='zanimanje-blok' id='blok-{code}'>"
+    html += f'<a href="#" hx-get="/sakrij/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a>'
+    html += f"<div class='opis'>{opis}</div></div>"
+    return html
+
+@app.get("/sakrij/{code}", response_class=HTMLResponse)
+def sakrij_opis(request: Request, code: str):
+    ime = zan_dict[code]["ime"]
+    html = f"<div class='zanimanje-blok' id='blok-{code}'>"
+    html += f'<a href="#" hx-get="/toggle/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a>'
+    html += "</div>"
+    return html
+
+@app.get("/test", response_class=HTMLResponse)
+def test(request: Request):
+    return "<div id='output'>Test uspješan!</div>"
