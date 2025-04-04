@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import json
 from urllib.parse import quote, unquote
-##01
+#02
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -28,7 +28,7 @@ for sifra, data in zan_dict.items():
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
-    # Za svaki rod spremamo original i URL-enkodiranu verziju
+    # Za svaki rod spremamo originalnu i URL-enkodiranu vrijednost
     rods = []
     for rod, skupina_set in rodovi.items():
         rods.append({
@@ -45,7 +45,6 @@ def skupine_rod(request: Request, rod: str):
     rod_enc = quote(rod)
     skupine_lista = sorted(list(rodovi.get(rod, [])))
     html = f"<div class='blok' id='rod-{rod_enc}'>"
-    # Link za "sakrij/vrati" rod – klikom se ponovno učitava lista skupina
     html += f"<a href='javascript:void(0)' hx-get='/sakrij-rod/{rod_enc}' hx-target='#rod-{rod_enc}' hx-swap='outerHTML'>{rod}</a>"
     html += "<ul>"
     for skupina in skupine_lista:
@@ -58,7 +57,6 @@ def skupine_rod(request: Request, rod: str):
 def sakrij_rod(request: Request, rod: str):
     rod = unquote(rod)
     rod_enc = quote(rod)
-    # Vraća samo link za ponovno otvaranje skupina
     html = f"<div class='blok' id='rod-{rod_enc}'>"
     html += f"<a href='javascript:void(0)' hx-get='/skupine/{rod_enc}' hx-target='#rod-{rod_enc}' hx-swap='outerHTML'>{rod}</a>"
     html += "</div>"
@@ -70,7 +68,6 @@ def zanimanja_skupina(request: Request, skupina: str):
     skupina_enc = quote(skupina)
     zanimanja = skupine.get(skupina, [])
     html = f"<div class='blok' id='skupina-{skupina_enc}'>"
-    # Link za "sakrij/vrati" skupinu
     html += f"<a href='javascript:void(0)' hx-get='/sakrij-skupinu/{skupina_enc}' hx-target='#skupina-{skupina_enc}' hx-swap='outerHTML'>{skupina}</a>"
     html += "<ul>"
     for z in zanimanja:
