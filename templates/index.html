@@ -53,20 +53,25 @@
 <body>
   <h1>Tablični prikaz NKZ</h1>
   <table class="zanimanja-table">
-    <tbody>
-      {% for item in rods %}
-        <tbody id="tbody-{{ item.slug }}">
-          <tr class="rod-row">
-            <td></td>
-            <td>
-              <a href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#tbody-{{ item.slug }}" hx-swap="innerHTML">
-                {{ item.rod }}
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      {% endfor %}
-    </tbody>
+    <thead>
+      <tr>
+        <th style="width: 9ch;">Šifra</th>
+        <th>Naziv</th>
+      </tr>
+    </thead>
+    <!-- Svaki rod u svom <tbody> -->
+    {% for item in rods %}
+      <tbody id="tbody-{{ item.slug }}">
+        <tr class="rod-row">
+          <td></td>
+          <td>
+            <a href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#tbody-{{ item.slug }}" hx-swap="innerHTML">
+              {{ item.rod }}
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    {% endfor %}
   </table>
   <br>
   <table class="zanimanja-table">
