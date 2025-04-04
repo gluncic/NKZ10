@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>NKZ – Zanimanja</title>
-    <!-- CSP meta tag: dozvoljavamo učitavanje skripti i stilova s 'self' i unpkg.com -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
     <style>
         body { font-family: sans-serif; margin: 2em; background: #f8f8f8; }
@@ -28,7 +27,6 @@
       <a href="#" hx-get="/test" hx-target="#test" hx-swap="outerHTML">Minimalni test</a>
     </div>
     
-    <!-- Učitavanje htmx skripte na kraju stranice -->
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <script>
       console.log("htmx:", window.htmx);
