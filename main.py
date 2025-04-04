@@ -117,8 +117,8 @@ def sakrij_skupinu(request: Request, skupina_slug: str):
     skupina = get_skupina_by_slug(skupina_slug)
     if not skupina:
         raise HTTPException(status_code=404, detail="Skupina nije pronađena")
-    # Dodano inline uvlačenje i class="skupina-link"
-    html = f"<div class='blok' id='skupina-{skupina_slug}' style='margin-left:20px;'>"
+    # Vraćamo collapsed verziju skupine bez dodatnog uvlačenja
+    html = f"<div class='blok' id='skupina-{skupina_slug}'>"
     html += f'<a class="skupina-link" href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
     html += "</div>"
     return html
@@ -129,20 +129,44 @@ def toggle_opis(request: Request, code: str):
         raise HTTPException(status_code=404, detail="Zanimanje nije pronađeno")
     opis = zan_dict[code]["description"]
     ime = zan_dict[code]["ime"]
-    html = f"<div class='zanimanje-blok' id='blok-{code}'>"
-    html += f'<a href="#" hx-get="/sakrij/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a>'
-    html += f"<div class='opis'>{opis}</div></div>"
-    return html
+    # Koristimo istu klasu i indent kao u collapsed stanju
+    return f"""
+    <tr id="row-occ-{code}" class="occupation-row">
+      <td>
+        {code}
+      </td>
+      <td>
+        <a class="zanimanje-link" href="#"
+           hx-get="/hide/{code}"
+           hx-target="#row-occ-{code}"
+           hx-swap="outerHTML">
+           &nbsp;&nbsp;{ime}
+        </a>
+        <div class="opis">{opis}</div>
+      </td>
+    </tr>
+    """
 
 @app.get("/sakrij/{code}", response_class=HTMLResponse)
 def sakrij_opis(request: Request, code: str):
     if code not in zan_dict:
         raise HTTPException(status_code=404, detail="Zanimanje nije pronađeno")
     ime = zan_dict[code]["ime"]
-    html = f"<div class='zanimanje-blok' id='blok-{code}'>"
-    html += f'<a href="#" hx-get="/toggle/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a>'
-    html += "</div>"
-    return html
+    return f"""
+    <tr id="row-occ-{code}" class="occupation-row">
+      <td>
+        {code}
+      </td>
+      <td>
+        <a class="zanimanje-link" href="#"
+           hx-get="/toggle/{code}"
+           hx-target="#row-occ-{code}"
+           hx-swap="outerHTML">
+           &nbsp;&nbsp;{ime}
+        </a>
+      </td>
+    </tr>
+    """
 
 @app.get("/test", response_class=HTMLResponse)
 def test(request: Request):
