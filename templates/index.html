@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>NKZ – Zanimanja</title>
-    <!-- Dodajemo defer kako bismo osigurali da se htmx učita nakon sadržaja stranice -->
-    <script defer src="https://unpkg.com/htmx.org@1.9.2"></script>
     <style>
         body { font-family: sans-serif; margin: 2em; background: #f8f8f8; }
         .blok { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
@@ -25,5 +23,12 @@
             </a>
         </div>
     {% endfor %}
+    
+    <!-- Učitavanje htmx skripte na kraju stranice -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <!-- Test: ispis htmx objekt u konzolu -->
+    <script>
+      console.log("htmx:", window.htmx);
+    </script>
 </body>
 </html>
