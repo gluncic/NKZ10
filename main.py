@@ -199,4 +199,20 @@ def hide_opis(request: Request, code: str):
     if code not in zan_dict:
         raise HTTPException(status_code=404, detail="Zanimanje nije pronađeno")
     ime = zan_dict[code]["ime"]
-    sifra =
+    sifra = code
+    # Collapsed state: prikazuje osnovne podatke i expand gumb
+    return f"""
+    <tr id="occ-{code}" class="occupation-row">
+      <td style="padding-left:2em;">
+        {sifra} {ime}
+        <span style="float:right; cursor:pointer;" 
+              hx-get="/toggle/{code}" 
+              hx-target="#occ-{code}" 
+              hx-swap="outerHTML">▼</span>
+      </td>
+    </tr>
+    """
+
+@app.get("/test", response_class=HTMLResponse)
+def test(request: Request):
+    return "<tr><td>Test uspješan!</td></tr>"
