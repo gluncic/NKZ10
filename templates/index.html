@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>NKZ – Zanimanja (Tablični prikaz)</title>
-    <!-- CSP meta tag: dozvoljavamo učitavanje skripti i stilova s 'self' i unpkg.com -->
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self' https://unpkg.com; 
                    script-src 'self' 'unsafe-inline' https://unpkg.com; 
@@ -26,19 +25,19 @@
         }
         /* Rod - prva razina */
         .rod-row {
-            background-color: #F25022; /* Microsoft narančasta */
+            background-color: #F25022;
             font-size: 1.3em;
             font-weight: bold;
         }
         /* Skupina - druga razina */
         .group-row {
-            background-color: #0078D7; /* Microsoft plava */
+            background-color: #0078D7;
             font-size: 1.1em;
             font-weight: bold;
         }
         /* Zanimanje - treća razina */
         .occupation-row {
-            background-color: #ffffff; /* Bijela */
+            background-color: #ffffff;
             font-size: 1em;
         }
         .opis {
@@ -47,6 +46,10 @@
             padding: 10px;
             font-style: italic;
             border-radius: 5px;
+        }
+        a {
+            text-decoration: none;
+            color: black;
         }
     </style>
 </head>
@@ -62,7 +65,6 @@
       </thead>
       <tbody>
         {% for item in rods %}
-          <!-- Svaki rod je inicijalno jedan <tr> -->
           <tr id="rod-{{ item.slug }}" class="rod-row">
             <td></td>
             <td>
@@ -79,7 +81,6 @@
     </table>
     
     <br>
-    <!-- Minimalni test (klik dodaje redak s 'Test uspješan!') -->
     <table class="zanimanja-table">
       <tbody id="test-tbody">
         <tr>
@@ -91,7 +92,7 @@
         </tr>
       </tbody>
     </table>
-
+    
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <script>
       console.log("htmx:", window.htmx);
