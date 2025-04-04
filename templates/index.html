@@ -2,7 +2,7 @@
 <html lang="hr">
 <head>
     <meta charset="UTF-8">
-    <title>Popis zanimanja</title>
+    <title>NKZ – Zanimanja</title>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <style>
         body {
@@ -11,19 +11,33 @@
             background: #f8f8f8;
         }
 
-        .zanimanje-blok {
-            padding: 10px 0;
+        .blok {
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 1px solid #ddd;
         }
 
-        .zanimanje {
+        .rod, .skupina, .zanimanje {
             cursor: pointer;
             font-weight: bold;
-            padding: 5px;
+            padding: 6px;
+        }
+
+        .rod {
+            color: #003366;
+        }
+
+        .skupina {
+            margin-left: 20px;
+            color: #005c99;
+        }
+
+        .zanimanje {
+            margin-left: 40px;
         }
 
         .opis {
-            margin-left: 20px;
+            margin-left: 60px;
             margin-top: 5px;
             background: #f0f0f0;
             padding: 10px;
@@ -33,15 +47,16 @@
     </style>
 </head>
 <body>
-    <h1>Popis zanimanja</h1>
-    {% for code, data in zanimanja.items() %}
-        <div id="blok-{{ code }}" class="zanimanje-blok">
-            <div class="zanimanje"
-                 hx-get="/toggle/{{ code }}"
-                 hx-target="#blok-{{ code }}"
+    <h1>Nacionalna klasifikacija zanimanja</h1>
+    
+    {% for rod, skupine in rodovi.items() %}
+        <div id="rod-{{ rod }}" class="blok">
+            <div class="rod"
+                 hx-get="/skupine/{{ rod }}"
+                 hx-target="#rod-{{ rod }}"
                  hx-swap="outerHTML"
                  hx-trigger="click">
-                {{ data.ime }}
+                {{ rod }}
             </div>
         </div>
     {% endfor %}
