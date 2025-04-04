@@ -24,19 +24,24 @@
             border: 1px solid #ccc;
             padding: 8px;
         }
-        /* Rod - prva razina */
+        /* Postavlja širinu prve kolone tako da stane sedmeroznamenkasti broj + male margine */
+        table.zanimanja-table th:first-child,
+        table.zanimanja-table td:first-child {
+            width: 9ch;
+        }
+        /* Rod (prva razina) */
         .rod-row {
-            background-color: #F25022; /* Microsoft narančasta */
+            background-color: rgba(242,80,34,0.7); /* Poluprozirna Microsoft narančasta */
             font-size: 1.3em;
             font-weight: bold;
         }
-        /* Skupina - druga razina */
+        /* Skupina (druga razina) */
         .group-row {
-            background-color: #0078D7; /* Microsoft plava */
+            background-color: rgba(0,120,215,0.7); /* Poluprozirna Microsoft plava */
             font-size: 1.1em;
             font-weight: bold;
         }
-        /* Zanimanje - treća razina */
+        /* Zanimanje (treća razina) */
         .occupation-row {
             background-color: #ffffff; /* Bijela */
             font-size: 1em;
@@ -48,6 +53,11 @@
             font-style: italic;
             border-radius: 5px;
         }
+        /* Uklanja podcrtavanje i postavlja tekst crnom bojom za sve linkove */
+        a {
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -56,7 +66,7 @@
     <table class="zanimanja-table">
       <thead>
         <tr>
-          <th style="width: 15%;">Šifra</th>
+          <th>Šifra</th>
           <th>Naziv</th>
         </tr>
       </thead>
@@ -79,7 +89,7 @@
     </table>
     
     <br>
-    <!-- Minimalni test (klik dodaje redak s 'Test uspješan!') -->
+    <!-- Minimalni test htmx link -->
     <table class="zanimanja-table">
       <tbody id="test-tbody">
         <tr>
