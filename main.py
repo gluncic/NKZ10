@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import json
+from urllib.parse import unquote
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -35,6 +36,7 @@ def index(request: Request):
 
 @app.get("/skupine/{rod}", response_class=HTMLResponse)
 def prikazi_skupine(request: Request, rod: str):
+    rod = unquote(rod)
     skupine_lista = sorted(list(rodovi.get(rod, [])))
     html = f"""
     <div id='rod-{rod}' class='blok'>
@@ -61,6 +63,7 @@ def prikazi_skupine(request: Request, rod: str):
 
 @app.get("/sakrij-rod/{rod}", response_class=HTMLResponse)
 def sakrij_rod(request: Request, rod: str):
+    rod = unquote(rod)
     return f"""
     <div id='rod-{rod}' class='blok'>
         <div class='rod' 
@@ -74,6 +77,7 @@ def sakrij_rod(request: Request, rod: str):
 
 @app.get("/zanimanja/{skupina}", response_class=HTMLResponse)
 def prikazi_zanimanja(request: Request, skupina: str):
+    skupina = unquote(skupina)
     zanimanja = skupine.get(skupina, [])
     html = f"""
     <div id='skupina-{skupina}' class='blok'>
@@ -100,6 +104,7 @@ def prikazi_zanimanja(request: Request, skupina: str):
 
 @app.get("/sakrij-skupinu/{skupina}", response_class=HTMLResponse)
 def sakrij_skupinu(request: Request, skupina: str):
+    skupina = unquote(skupina)
     return f"""
     <div id='skupina-{skupina}' class='blok'>
         <div class='skupina' 
