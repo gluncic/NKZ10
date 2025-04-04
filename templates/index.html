@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>NKZ – Zanimanja</title>
-    <!-- Dodajemo meta tag za CSP kako bismo dozvolili inline skripte i skripte s unpkg.com -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com;">
+    <!-- CSP meta tag: dozvoljavamo učitavanje skripti i stilova s 'self' i unpkg.com -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
     <style>
         body { font-family: sans-serif; margin: 2em; background: #f8f8f8; }
         .blok { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
@@ -17,10 +17,7 @@
     <h1>Nacionalna klasifikacija zanimanja</h1>
     {% for item in rods %}
         <div class="blok" id="rod-{{ item.encoded }}">
-            <a href="#" onclick="console.log('Clicked rod: {{ item.rod }}');"
-               hx-get="/skupine/{{ item.encoded }}"
-               hx-target="#rod-{{ item.encoded }}"
-               hx-swap="outerHTML">
+            <a href="#" hx-get="/skupine/{{ item.encoded }}" hx-target="#rod-{{ item.encoded }}" hx-swap="outerHTML">
                 {{ item.rod }}
             </a>
         </div>
