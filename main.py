@@ -85,7 +85,8 @@ def sakrij_rod(request: Request, rod_slug: str):
     if not rod:
         raise HTTPException(status_code=404, detail="Rod nije pronađen")
     html = f"<div class='blok' id='rod-{rod_slug}'>"
-    html += f'<a href="#" hx-get="/skupine/{rod_slug}" hx-target="#rod-{rod_slug}" hx-swap="outerHTML">{rod}</a>'
+    # Dodan je class="rod-link" kako bi se stil zadržao
+    html += f'<a class="rod-link" href="#" hx-get="/skupine/{rod_slug}" hx-target="#rod-{rod_slug}" hx-swap="outerHTML">{rod}</a>'
     html += "</div>"
     return html
 
@@ -116,8 +117,9 @@ def sakrij_skupinu(request: Request, skupina_slug: str):
     skupina = get_skupina_by_slug(skupina_slug)
     if not skupina:
         raise HTTPException(status_code=404, detail="Skupina nije pronađena")
-    html = f"<div class='blok' id='skupina-{skupina_slug}'>"
-    html += f'<a href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
+    # Dodano inline uvlačenje i class="skupina-link"
+    html = f"<div class='blok' id='skupina-{skupina_slug}' style='margin-left:20px;'>"
+    html += f'<a class="skupina-link" href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
     html += "</div>"
     return html
 
