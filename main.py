@@ -98,9 +98,11 @@ def zanimanja_skupina(request: Request, skupina_slug: str):
     for z in zanimanja:
         sifra = z["sifra"]
         ime = z["ime"]
-        html += f'<li><a href="#" hx-get="/toggle/{sifra}" hx-target="#blok-{sifra}" hx-swap="outerHTML">{ime}</a></li>'
+        # Omotavamo link u div s id-om "blok-<sifra>" kako bi hx-target bio prisutan
+        html += f'<li><div id="blok-{sifra}"><a href="#" hx-get="/toggle/{sifra}" hx-target="#blok-{sifra}" hx-swap="outerHTML">{ime}</a></div></li>'
     html += "</ul></div>"
     return html
+
 
 @app.get("/sakrij-skupinu/{skupina_slug}", response_class=HTMLResponse)
 def sakrij_skupinu(request: Request, skupina_slug: str):
