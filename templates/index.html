@@ -3,20 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <title>NKZ – Zanimanja</title>
+    <!-- CSP meta tag: dozvoljavamo učitavanje skripti i stilova s 'self' i unpkg.com -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
     <style>
-        body { font-family: sans-serif; margin: 2em; background: #f8f8f8; }
-        .blok { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
-        a { cursor: pointer; text-decoration: none; font-weight: bold; padding: 6px; display: block; }
-        ul { list-style-type: none; padding-left: 20px; }
-        .opis { margin-left: 20px; margin-top: 5px; background: #f0f0f0; padding: 10px; font-style: italic; border-radius: 5px; }
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+            background: #f8f8f8;
+        }
+        .blok {
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        /* Prva razina: rod */
+        .rod-link {
+            color: #003366;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        /* Druga razina: skupina */
+        .skupina-link {
+            margin-left: 20px;
+            color: #005c99;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        /* Treća razina: zanimanje */
+        .zanimanje-link {
+            margin-left: 40px;
+            color: #333;
+            font-size: 1em;
+            text-decoration: none;
+        }
+        /* Opis zanimanja */
+        .opis {
+            margin-left: 60px;
+            margin-top: 5px;
+            background: #f0f0f0;
+            padding: 10px;
+            font-style: italic;
+            border-radius: 5px;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin: 4px 0;
+        }
     </style>
 </head>
 <body>
     <h1>Nacionalna klasifikacija zanimanja</h1>
     {% for item in rods %}
         <div class="blok" id="rod-{{ item.slug }}">
-            <a href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#rod-{{ item.slug }}" hx-swap="outerHTML">
+            <a class="rod-link"
+               href="#"
+               hx-get="/skupine/{{ item.slug }}"
+               hx-target="#rod-{{ item.slug }}"
+               hx-swap="outerHTML">
                 {{ item.rod }}
             </a>
         </div>
