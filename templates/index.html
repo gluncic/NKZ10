@@ -2,81 +2,79 @@
 <html lang="hr">
 <head>
   <meta charset="UTF-8">
-  <title>NKZ – Zanimanja (Jednostupčani prikaz)</title>
+  <title>NKZ – Zanimanja</title>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
   <style>
     body {
       font-family: sans-serif;
       margin: 2em;
       background: #f8f8f8;
+    }
+    .blok {
+      margin-bottom: 12px;
+      padding: 8px;
+      border: 1px solid black; /* Kvadratni obrub oko svake "ćelije" */
+    }
+    /* Prva razina: rod */
+    .rod-link {
       color: black;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    td {
-      border: 1px solid #ccc;
-      padding: 4px;
-    }
-    /* Stilovi za pojedinačne razine */
-    .rod-row {
-      background-color: rgba(242,80,34,0.5);
       font-size: 1.4em;
       font-weight: bold;
+      text-decoration: none;
     }
-    .group-row {
-      background-color: rgba(0,120,215,0.5);
+    /* Druga razina: skupina */
+    .skupina-link {
+      margin-left: 20px;
+      color: black;
       font-size: 1.2em;
       font-weight: bold;
+      text-decoration: none;
     }
-    .occupation-row {
-      background-color: #ffffff;
+    /* Treća razina: zanimanje */
+    .zanimanje-link {
+      margin-left: 40px;
+      color: black;
       font-size: 1em;
+      text-decoration: none;
     }
+    /* Opis zanimanja */
     .opis {
-      margin-top: 6px;
+      margin-left: 60px;
+      margin-top: 5px;
       background: #f0f0f0;
       padding: 10px;
       font-style: italic;
       border-radius: 5px;
       color: black;
     }
-    a {
-      text-decoration: none;
-      color: black;
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    li {
+      margin: 4px 0;
     }
   </style>
 </head>
 <body>
-  <h1>NKZ – Tablični prikaz (jedna kolona)</h1>
-  <table>
-    <tbody id="main-tbody">
-      {% for item in rods %}
-        <tbody id="tbody-{{ item.slug }}">
-          <tr class="rod-row" id="rod-{{ item.slug }}">
-            <td>
-              <a class="rod-link" href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#tbody-{{ item.slug }}" hx-swap="innerHTML">
-                {{ item.rod }}
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      {% endfor %}
-    </tbody>
-  </table>
-  <br>
-  <table>
-    <tbody id="test-tbody">
-      <tr>
-        <td>
-          <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="afterbegin">
-            Minimalni test
-          </a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <h1>Nacionalna klasifikacija zanimanja</h1>
+  {% for item in rods %}
+    <div class="blok" id="rod-{{ item.slug }}">
+      <a class="rod-link"
+         href="#"
+         hx-get="/skupine/{{ item.slug }}"
+         hx-target="#rod-{{ item.slug }}"
+         hx-swap="outerHTML">
+        {{ item.rod }}
+      </a>
+    </div>
+  {% endfor %}
+  
+  <!-- Minimalni test htmx link -->
+  <div class="blok" id="test">
+    <a href="#" hx-get="/test" hx-target="#test" hx-swap="outerHTML">Minimalni test</a>
+  </div>
+  
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
   <script>
     console.log("htmx:", window.htmx);
