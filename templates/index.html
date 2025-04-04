@@ -2,8 +2,12 @@
 <html lang="hr">
 <head>
     <meta charset="UTF-8">
-    <title>Tablični prikaz NKZ</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
+    <title>NKZ – Zanimanja (Tablični prikaz)</title>
+    <!-- CSP meta tag: dozvoljavamo učitavanje skripti i stilova s 'self' i unpkg.com -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self' https://unpkg.com; 
+                   script-src 'self' 'unsafe-inline' https://unpkg.com; 
+                   style-src 'self' 'unsafe-inline';">
     <style>
         body {
             font-family: sans-serif;
@@ -11,47 +15,96 @@
             background: #f8f8f8;
             color: black;
         }
-        table {
+        table.zanimanja-table {
             border-collapse: collapse;
             width: 100%;
         }
-        td {
+        table.zanimanja-table th,
+        table.zanimanja-table td {
             border: 1px solid #ccc;
-            padding: 4px;
+            padding: 8px;
         }
-        /* Stilovi za rod, skupinu i zanimanje se mogu dodatno definirati unutar HTML fragmenata (inline) */
+        /* Postavlja širinu prve kolone tako da stane sedmeroznamenkasti broj + male margine */
+        table.zanimanja-table th:first-child,
+        table.zanimanja-table td:first-child {
+            width: 9ch;
+        }
+        /* Rod (prva razina) */
+        .rod-row {
+            background-color: rgba(242,80,34,0.7); /* Poluprozirna Microsoft narančasta */
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        /* Skupina (druga razina) */
+        .group-row {
+            background-color: rgba(0,120,215,0.7); /* Poluprozirna Microsoft plava */
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        /* Zanimanje (treća razina) */
+        .occupation-row {
+            background-color: #ffffff; /* Bijela */
+            font-size: 1em;
+        }
+        .opis {
+            margin-top: 6px;
+            background: #f0f0f0;
+            padding: 10px;
+            font-style: italic;
+            border-radius: 5px;
+        }
+        /* Uklanja podcrtavanje i postavlja tekst crnom bojom za sve linkove */
+        a {
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
 <body>
     <h1>Tablični prikaz NKZ</h1>
-    <table>
+    
+    <table class="zanimanja-table">
+      <thead>
+        <tr>
+          <th>Šifra</th>
+          <th>Naziv</th>
+        </tr>
+      </thead>
       <tbody>
-         {% for item in rods %}
-         <tr>
-           <td>
-             <div id="row-rod-{{ item.slug }}" class="rod-row">
-               <a href="#" hx-get="/skupine/{{ item.slug }}" hx-target="#row-rod-{{ item.slug }}" hx-swap="outerHTML">
+        {% for item in rods %}
+          <!-- Svaki rod je inicijalno jedan <tr> -->
+          <tr id="rod-{{ item.slug }}" class="rod-row">
+            <td></td>
+            <td>
+              <a href="#"
+                 hx-get="/skupine/{{ item.slug }}"
+                 hx-target="#rod-{{ item.slug }}"
+                 hx-swap="outerHTML">
                  {{ item.rod }}
-               </a>
-             </div>
-           </td>
-         </tr>
-         {% endfor %}
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
+    
     <br>
-    <table>
+    <!-- Minimalni test htmx link -->
+    <table class="zanimanja-table">
       <tbody id="test-tbody">
-         <tr>
-           <td>
-             <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="afterbegin">
-               Minimalni test
-             </a>
-           </td>
-         </tr>
+        <tr>
+          <td colspan="2">
+            <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="afterbegin">
+              Minimalni test
+            </a>
+          </td>
+        </tr>
       </tbody>
     </table>
+
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
-    <script> console.log("htmx:", window.htmx); </script>
+    <script>
+      console.log("htmx:", window.htmx);
+    </script>
 </body>
 </html>
