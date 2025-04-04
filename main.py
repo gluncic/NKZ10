@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import json
+from urllib.parse import unquote, quote
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -32,33 +33,41 @@ for sifra, data in zan_dict.items():
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     # Pretvorba seta u sortirane liste radi lakše iteracije u predlošku
-    sorted_rodovi = {rod: sorted(list(skupine)) for rod, skupine in rodovi.items()}
+    sorted_rodovi = {rod: sorted(list(skupina)) for rod, skupina in rodovi.items()}
     return templates.TemplateResponse("index.html", {"request": request, "rodovi": sorted_rodovi})
 
 @app.get("/skupine/{rod}", response_class=HTMLResponse)
 def prikazi_skupine(request: Request, rod: str):
+    # Dekodiraj URL parametar
+    rod = unquote(rod)
+    rod_enc = quote(rod)
     skupine_lista = sorted(list(rodovi.get(rod, [])))
-    html = f"<div id='rod-{rod}' class='blok'>"
-    html += f"<div class='rod' hx-get='/sakrij-rod/{rod}' hx-target='#rod-{rod}' hx-swap='outerHTML'>{rod}</div>"
+    html = f"<div id='rod-{rod_enc}' class='blok'>"
+    html += f"<div class='rod' hx-get='/sakrij-rod/{rod_enc}' hx-target='#rod-{rod_enc}' hx-swap='outerHTML'>{rod}</div>"
     for skupina in skupine_lista:
-        html += f"<div id='skupina-{skupina}' class='blok'>"
-        html += f"<div class='skupina' hx-get='/zanimanja/{skupina}' hx-target='#skupina-{skupina}' hx-swap='outerHTML'>{skupina}</div>"
+        skupina_enc = quote(skupina)
+        html += f"<div id='skupina-{skupina_enc}' class='blok'>"
+        html += f"<div class='skupina' hx-get='/zanimanja/{skupina_enc}' hx-target='#skupina-{skupina_enc}' hx-swap='outerHTML'>{skupina}</div>"
         html += "</div>"
     html += "</div>"
     return html
 
 @app.get("/sakrij-rod/{rod}", response_class=HTMLResponse)
 def sakrij_rod(request: Request, rod: str):
-    html = f"<div id='rod-{rod}' class='blok'>"
-    html += f"<div class='rod' hx-get='/skupine/{rod}' hx-target='#rod-{rod}' hx-swap='outerHTML'>{rod}</div>"
+    rod = unquote(rod)
+    rod_enc = quote(rod)
+    html = f"<div id='rod-{rod_enc}' class='blok'>"
+    html += f"<div class='rod' hx-get='/skupine/{rod_enc}' hx-target='#rod-{rod_enc}' hx-swap='outerHTML'>{rod}</div>"
     html += "</div>"
     return html
 
 @app.get("/zanimanja/{skupina}", response_class=HTMLResponse)
 def prikazi_zanimanja(request: Request, skupina: str):
+    skupina = unquote(skupina)
+    skupina_enc = quote(skupina)
     zanimanja = skupine.get(skupina, [])
-    html = f"<div id='skupina-{skupina}' class='blok'>"
-    html += f"<div class='skupina' hx-get='/sakrij-skupinu/{skupina}' hx-target='#skupina-{skupina}' hx-swap='outerHTML'>{skupina}</div>"
+    html = f"<div id='skupina-{skupina_enc}' class='blok'>"
+    html += f"<div class='skupina' hx-get='/sakrij-skupinu/{skupina_enc}' hx-target='#skupina-{skupina_enc}' hx-swap='outerHTML'>{skupina}</div>"
     for z in zanimanja:
         sifra = z['sifra']
         ime = z['ime']
@@ -70,8 +79,10 @@ def prikazi_zanimanja(request: Request, skupina: str):
 
 @app.get("/sakrij-skupinu/{skupina}", response_class=HTMLResponse)
 def sakrij_skupinu(request: Request, skupina: str):
-    html = f"<div id='skupina-{skupina}' class='blok'>"
-    html += f"<div class='skupina' hx-get='/zanimanja/{skupina}' hx-target='#skupina-{skupina}' hx-swap='outerHTML'>{skupina}</div>"
+    skupina = unquote(skupina)
+    skupina_enc = quote(skupina)
+    html = f"<div id='skupina-{skupina_enc}' class='blok'>"
+    html += f"<div class='skupina' hx-get='/zanimanja/{skupina_enc}' hx-target='#skupina-{skupina_enc}' hx-swap='outerHTML'>{skupina}</div>"
     html += "</div>"
     return html
 
