@@ -129,8 +129,8 @@ def toggle_opis(request: Request, code: str):
         raise HTTPException(status_code=404, detail="Zanimanje nije pronađeno")
     opis = zan_dict[code]["description"]
     ime = zan_dict[code]["ime"]
-    html = f"<div class='zanimanje-blok' id='blok-{code}'>"
-    # Dodana inline pravila da se tekst prikaže kao običan, crni tekst
+    # Dodajemo inline style margin-left:40px; kako bi se sačuvala indentacija
+    html = f"<div class='zanimanje-blok' id='blok-{code}' style='margin-left:40px;'>"
     html += f'<a class="occupation-toggle" style="text-decoration:none; color:black;" href="#" hx-get="/sakrij/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a>'
     html += f"<div class='opis'>{opis}</div></div>"
     return html
@@ -140,7 +140,7 @@ def sakrij_opis(request: Request, code: str):
     if code not in zan_dict:
         raise HTTPException(status_code=404, detail="Zanimanje nije pronađeno")
     ime = zan_dict[code]["ime"]
-    html = f"<div class='zanimanje-blok' id='blok-{code}'>"
+    html = f"<div class='zanimanje-blok' id='blok-{code}' style='margin-left:40px;'>"
     html += f'<a class="occupation-toggle" style="text-decoration:none; color:black;" href="#" hx-get="/toggle/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a>'
     html += "</div>"
     return html
