@@ -5,39 +5,13 @@
     <title>NKZ – Zanimanja</title>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 2em;
-            background: #f8f8f8;
-        }
-        .blok {
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #ddd;
-        }
-        .rod, .skupina, .zanimanje {
-            cursor: pointer;
-            font-weight: bold;
-            padding: 6px;
-        }
-        .rod {
-            color: #003366;
-        }
-        .skupina {
-            margin-left: 20px;
-            color: #005c99;
-        }
-        .zanimanje {
-            margin-left: 40px;
-        }
-        .opis {
-            margin-left: 60px;
-            margin-top: 5px;
-            background: #f0f0f0;
-            padding: 10px;
-            font-style: italic;
-            border-radius: 5px;
-        }
+        body { font-family: sans-serif; margin: 2em; background: #f8f8f8; }
+        .blok { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
+        .rod, .skupina, .zanimanje { cursor: pointer; font-weight: bold; padding: 6px; }
+        .rod { color: #003366; }
+        .skupina { margin-left: 20px; color: #005c99; }
+        .zanimanje { margin-left: 40px; }
+        .opis { margin-left: 60px; margin-top: 5px; background: #f0f0f0; padding: 10px; font-style: italic; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -47,7 +21,8 @@
             <div class="rod"
                  hx-get="/skupine/{{ item.encoded }}"
                  hx-target="#rod-{{ item.encoded }}"
-                 hx-swap="outerHTML">
+                 hx-swap="outerHTML"
+                 hx-trigger="click">
                 {{ item.rod }}
             </div>
         </div>
