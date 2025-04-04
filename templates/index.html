@@ -43,10 +43,10 @@
 <body>
     <h1>Nacionalna klasifikacija zanimanja</h1>
     {% for rod, skupine in rodovi.items() %}
-        <div id="rod-{{ rod }}" class="blok">
+        <div id="rod-{{ rod | urlencode }}" class="blok">
             <div class="rod"
-                 hx-get="/skupine/{{ rod }}"
-                 hx-target="#rod-{{ rod }}"
+                 hx-get="/skupine/{{ rod | urlencode }}"
+                 hx-target="#rod-{{ rod | urlencode }}"
                  hx-swap="outerHTML">
                 {{ rod }}
             </div>
