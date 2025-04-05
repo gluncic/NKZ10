@@ -53,7 +53,7 @@ def index(request: Request):
             "skupine": sorted(list(skupina_set))
         })
     rods.sort(key=lambda x: x["rod"])
-    return templates.TemplateResponse("index.html", {"request": request, "rods": rods})
+    return templates.TemplateResponse("index.html", {"request": request, "rods": rods, "slugify": slugify})
 
 @app.get("/skupine/{rod_slug}", response_class=HTMLResponse)
 def skupine_rod(request: Request, rod_slug: str):
