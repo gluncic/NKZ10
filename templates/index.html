@@ -1,122 +1,138 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-  <meta charset="UTF-8">
-  <title>NKZ – Tablični prikaz</title>
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' https://unpkg.com;
-                 script-src 'self' 'unsafe-inline' https://unpkg.com;
-                 style-src 'self' 'unsafe-inline';">
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 2em;
-      background: #f8f8f8;
-      color: black;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    tr, td {
-      border: 1px solid black; /* kvadratni obrub */
-      padding: 6px;
-    }
-    /* Rod */
-    .rod-row {
-      background-color: rgba(242,80,34,0.5); /* poluprozirna narančasta */
-    }
-    .rod-link {
-      color: black;
-      font-size: 1.4em;
-      font-weight: bold;
-      text-decoration: none;
-    }
-    .collapse-rod {
-      margin-left: 10px;
-      color: black;
-      font-size: 0.9em;
-      text-decoration: none;
-    }
-
-    /* Skupina */
-    .group-row {
-      background-color: rgba(0,120,215,0.5); /* poluprozirna plava */
-    }
-    .skupina-link {
-      color: black;
-      font-size: 1.2em;
-      font-weight: bold;
-      text-decoration: none;
-    }
-    .collapse-group {
-      margin-left: 10px;
-      color: black;
-      font-size: 0.8em;
-      text-decoration: none;
-    }
-
-    /* Zanimanje */
-    .occupation-row {
-      background-color: #fff;
-    }
-    .zanimanje-link {
-      color: black;
-      font-size: 1em;
-      text-decoration: none;
-    }
-    .collapse-occ {
-      margin-left: 10px;
-      color: black;
-      font-size: 0.8em;
-      text-decoration: none;
-    }
-
-    /* Opis */
-    .opis {
-      margin-top: 6px;
-      background: #f0f0f0;
-      padding: 10px;
-      font-style: italic;
-      border: 1px solid #ccc;
-      color: black;
-    }
-  </style>
-  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <meta charset="UTF-8">
+    <title>NKZ – Zanimanja</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+            background: #f8f8f8;
+            color: black;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        /* Rodovi: najveći font, bez uvlačenja */
+        .rod-link {
+            color: black;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .rod-cell {
+            padding-left: 0; /* Bez uvlačenja za rod */
+        }
+        /* Skupine: malo uvučene, malo manji font */
+        .skupina-link {
+            color: black;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .skupina-cell {
+            padding-left: 20px; /* Uvlačenje za skupinu */
+        }
+        .skupina-cell ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        .skupina-cell li {
+            margin: 4px 0;
+        }
+        /* Zanimanja: dodatno uvučena, najmanji font */
+        .zanimanje-link {
+            color: black;
+            font-size: 1em;
+            text-decoration: none;
+        }
+        .zanimanje-cell {
+            padding-left: 40px; /* Uvlačenje za zanimanje */
+        }
+        .zanimanje-cell ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        .zanimanje-cell li {
+            margin: 4px 0;
+        }
+        /* Opis zanimanja */
+        .opis-cell {
+            padding-left: 60px; /* Dodatno uvlačenje za opis */
+            background: #f0f0f0;
+            padding: 10px;
+            font-style: italic;
+            border-radius: 5px;
+            color: black;
+        }
+        .opis {
+            margin-top: 5px;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin: 4px 0;
+        }
+    </style>
 </head>
 <body>
-  <h1>Nacionalna klasifikacija zanimanja</h1>
+    <h1>Nacionalna klasifikacija zanimanja</h1>
+    <table>
+        <tbody>
+            {% for item in rods %}
+                <tr id="rod-{{ item.slug }}">
+                    <td class="rod-cell">
+                        <a class="rod-link"
+                           href="#"
+                           hx-get="/skupine/{{ item.slug }}"
+                           hx-target="#rod-{{ item.slug }}"
+                           hx-swap="outerHTML">
+                            {{ item.rod }}
+                        </a>
+                    </td>
+                    <td>
+                        <ul>
+                            {% for skupina in item.skupine %}
+                                <li>
+                                    <div id="skupina-{{ slugify(skupina) }}">
+                                        <a class="skupina-link"
+                                           href="#"
+                                           hx-get="/zanimanja/{{ slugify(skupina) }}"
+                                           hx-target="#skupina-{{ slugify(skupina) }}"
+                                           hx-swap="outerHTML">
+                                            {{ skupina }}
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td></td> </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-  <table id="main-table">
-    <tbody id="table-body">
-      {% for item in rods %}
-      <tr id="rod-{{ item.slug }}" class="rod-row">
-        <td>
-          <!-- collapsed rod -->
-          <a class="rod-link"
-             href="#"
-             hx-get="/expand-rod/{{ item.slug }}"
-             hx-target="#rod-{{ item.slug }}"
-             hx-swap="outerHTML">
-             {{ item.rod }}
-          </a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <div class="blok" id="test">
+        <a href="#" hx-get="/test" hx-target="#test" hx-swap="outerHTML">Minimalni test</a>
+    </div>
 
-  <br>
-  <table>
-    <tbody id="test-tbody">
-      <tr>
-        <td>
-          <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="outerHTML">
-            Minimalni test
-          </a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script>
+        console.log("htmx:", window.htmx);
+    </script>
 </body>
 </html>
