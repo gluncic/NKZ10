@@ -20,64 +20,58 @@
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-        th {
-            background-color: #f0f0f0;
+        /* Rodovi */
+        .rod-cell {
+            padding-left: 0;
         }
-        /* Rodovi: najveći font, bez uvlačenja */
         .rod-link {
             color: black;
             font-size: 1.2em;
             font-weight: bold;
             text-decoration: none;
+            display: block; /* Da zauzme cijelu širinu ćelije */
         }
-        .rod-cell {
-            padding-left: 0; /* Bez uvlačenja za rod */
+        /* Skupine */
+        .skupine-cell-container {
+            padding-left: 20px;
         }
-        /* Skupine: malo uvučene, malo manji font */
+        .skupine-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
         .skupina-link {
             color: black;
             font-size: 1.1em;
             font-weight: bold;
             text-decoration: none;
+            display: block; /* Da zauzme cijelu širinu kontejnera */
         }
-        .skupina-cell {
-            padding-left: 20px; /* Uvlačenje za skupinu */
+        /* Zanimanja */
+        .zanimanja-cell-container {
+            padding-left: 40px;
         }
-        .skupina-cell ul {
+        .zanimanja-list {
             list-style-type: none;
             padding-left: 0;
             margin: 0;
         }
-        .skupina-cell li {
-            margin: 4px 0;
-        }
-        /* Zanimanja: dodatno uvučena, najmanji font */
         .zanimanje-link {
             color: black;
             font-size: 1em;
             text-decoration: none;
+            display: block; /* Da zauzme cijelu širinu kontejnera */
         }
-        .zanimanje-cell {
-            padding-left: 40px; /* Uvlačenje za zanimanje */
+        /* Opis */
+        .opis-container {
+            padding-left: 60px;
         }
-        .zanimanje-cell ul {
-            list-style-type: none;
-            padding-left: 0;
-            margin: 0;
-        }
-        .zanimanje-cell li {
-            margin: 4px 0;
-        }
-        /* Opis zanimanja */
-        .opis-cell {
-            padding-left: 60px; /* Dodatno uvlačenje za opis */
+        .opis {
             background: #f0f0f0;
             padding: 10px;
             font-style: italic;
             border-radius: 5px;
             color: black;
-        }
-        .opis {
             margin-top: 5px;
         }
         ul {
@@ -104,29 +98,16 @@
                             {{ item.rod }}
                         </a>
                     </td>
-                    <td>
-                        <ul>
-                            {% for skupina in item.skupine %}
-                                <li>
-                                    <div id="skupina-{{ slugify(skupina) }}">
-                                        <a class="skupina-link"
-                                           href="#"
-                                           hx-get="/zanimanja/{{ slugify(skupina) }}"
-                                           hx-target="#skupina-{{ slugify(skupina) }}"
-                                           hx-swap="outerHTML">
-                                            {{ skupina }}
-                                        </a>
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td></td> </tr>
+                    <td class="skupine-cell-container">
+                        </td>
+                    <td class="zanimanja-cell-container">
+                        </td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <div class="blok" id="test">
+    <div class="blok" id="test" style="margin-top: 20px;">
         <a href="#" hx-get="/test" hx-target="#test" hx-swap="outerHTML">Minimalni test</a>
     </div>
 
