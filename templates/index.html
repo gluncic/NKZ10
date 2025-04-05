@@ -20,7 +20,7 @@
       font-weight: bold;
       text-decoration: none;
     }
-    .group-link, .skupina-link {
+    .skupina-link {
       color: black;
       font-size: 1.2em;
       font-weight: bold;
@@ -47,7 +47,6 @@
   <table id="main-table">
     <tbody id="table-body">
       {% for item in rods %}
-        <!-- Svaki rod u collapsed stanju -->
         <tr id="rod-{{ item.slug }}" class="rod-row">
           <td>
             <a class="rod-link" href="#" hx-get="/expand-rod/{{ item.slug }}" hx-target="#rod-{{ item.slug }}" hx-swap="outerHTML">
@@ -63,7 +62,7 @@
     <tbody id="test-tbody">
       <tr>
         <td>
-          <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="outerHTML">
+          <a href="#" hx-get="/test" hx-target="#test-tbody" hx-swap="afterbegin">
             Minimalni test
           </a>
         </td>
