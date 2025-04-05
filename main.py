@@ -11,10 +11,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 def slugify(value: str) -> str:
-    """
-    Normalizira tekst, uklanja dijakritike i nealfanumeričke znakove
-    te zamjenjuje razmake s crticama (lowercase).
-    """
     value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
     value = re.sub(r"[^\w\s-]", "", value).strip().lower()
     value = re.sub(r"[-\s]+", "-", value)
@@ -32,9 +28,6 @@ def get_skupina_by_slug(slug: str) -> str:
             return skupina
     return None
 
-# -----------------------------------------
-# Učitavanje i grupiranje podataka iz JSON
-# -----------------------------------------
 with open("NKZ_descriptions_chatGPT4omini.json", encoding="utf-8") as f:
     zan_dict = json.load(f)
 
@@ -50,192 +43,93 @@ for sifra, data in zan_dict.items():
         "ime": data["ime"]
     })
 
-# -----------------------------------------
-# Početna stranica – prikazuje rodove
-# -----------------------------------------
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     rods = []
-    for rod, skupine_set in rodovi.items():
+    for rod, skupina_set in rodovi.items():
         rods.append({
             "rod": rod,
             "slug": slugify(rod),
-            "skupine": sorted(list(skupine_set))
+            "skupine": sorted(list(skupina_set))
         })
     rods.sort(key=lambda x: x["rod"])
     return templates.TemplateResponse("index.html", {"request": request, "rods": rods})
 
-# ------------------------------------------------------------------
-# Rodovi – collapsed (prikaže se samo rod) i expanded (rod + skupine)
-# ------------------------------------------------------------------
-
-@app.get("/expand-rod/{rod_slug}", response_class=HTMLResponse)
-def expand_rod(request: Request, rod_slug: str):
-    """Klik na rod – prikazuje rod + skupine (collapsed)."""
+@app.get("/skupine/{rod_slug}", response_class=HTMLResponse)
+def skupine_rod(request: Request, rod_slug: str):
     rod = get_rod_by_slug(rod_slug)
     if not rod:
         raise HTTPException(status_code=404, detail="Rod nije pronađen")
-    skupine_lista = sorted(list(rodovi[rod]))
-
-    # 1) Prvi redak: rod s linkom za collapse
-    html = f"""
-    <tr id="rod-{rod_slug}" class="rod-row">
-      <td>
-        <span class="rod-link">{rod}</span>
-        <a class="collapse-rod" href="#"
-           hx-get="/collapse-rod/{rod_slug}"
-           hx-target="#rod-{rod_slug}"
-           hx-swap="outerHTML">
-           (Sakrij)
-        </a>
-      </td>
-    </tr>
-    """
-    # 2) Redci za skupine (u collapsed stanju)
+    skupine_lista = sorted(list(rodovi.get(rod, [])))
+    html = f'<tr id="rod-{rod_slug}"><td class="rod-cell">'
+    html += f'<a class="rod-link" href="#" hx-get="/sakrij-rod/{rod_slug}" hx-target="#rod-{rod_slug}" hx-swap="outerHTML">{rod}</a>'
+    html += '</td><td><ul>'
     for skupina in skupine_lista:
         skupina_slug = slugify(skupina)
-        html += f"""
-        <tr id="skupina-{skupina_slug}" class="group-row">
-          <td style="padding-left:20px;">
-            <a class="skupina-link" href="#"
-               hx-get="/expand-group/{skupina_slug}"
-               hx-target="#skupina-{skupina_slug}"
-               hx-swap="outerHTML">
-               {skupina}
-            </a>
-          </td>
-        </tr>
-        """
+        html += f'<li><div id="skupina-{skupina_slug}">'
+        html += f'<a class="skupina-link" href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
+        html += '</div></li>'
+    html += '</ul></td><td></td></tr>'
     return html
 
-@app.get("/collapse-rod/{rod_slug}", response_class=HTMLResponse)
-def collapse_rod(request: Request, rod_slug: str):
-    """Klik na (Sakrij) – vraća rod u početno (collapsed) stanje."""
+@app.get("/sakrij-rod/{rod_slug}", response_class=HTMLResponse)
+def sakrij_rod(request: Request, rod_slug: str):
     rod = get_rod_by_slug(rod_slug)
     if not rod:
         raise HTTPException(status_code=404, detail="Rod nije pronađen")
-    # Kao u index.html: jedan redak s linkom za expand
-    return f"""
-    <tr id="rod-{rod_slug}" class="rod-row">
-      <td>
-        <a class="rod-link" href="#"
-           hx-get="/expand-rod/{rod_slug}"
-           hx-target="#rod-{rod_slug}"
-           hx-swap="outerHTML">
-           {rod}
-        </a>
-      </td>
-    </tr>
-    """
-
-# -------------------------------------------
-# Skupine – collapsed i expanded (prikazuje zanimanja)
-# -------------------------------------------
-
-@app.get("/expand-group/{group_slug}", response_class=HTMLResponse)
-def expand_group(request: Request, group_slug: str):
-    """Klik na skupinu – prikazuje skupinu s linkom za sakrivanje i retke za zanimanja."""
-    skupina = get_skupina_by_slug(group_slug)
-    if not skupina:
-        raise HTTPException(status_code=404, detail="Skupina nije pronađena")
-    lista_zanimanja = skupine[skupina]
-
-    # 1) Prvi redak: skupina s linkom (Sakrij)
-    html = f"""
-    <tr id="skupina-{group_slug}" class="group-row">
-      <td style="padding-left:20px;">
-        <span class="skupina-link">{skupina}</span>
-        <a class="collapse-group" href="#"
-           hx-get="/collapse-group/{group_slug}"
-           hx-target="#skupina-{group_slug}"
-           hx-swap="outerHTML">
-           (Sakrij)
-        </a>
-      </td>
-    </tr>
-    """
-    # 2) Redci za zanimanja (collapsed)
-    for z in lista_zanimanja:
-        code = z["sifra"]
-        ime = z["ime"]
-        html += f"""
-        <tr id="occ-{code}" class="occupation-row">
-          <td style="padding-left:20px;">
-            <a class="zanimanje-link" href="#"
-               hx-get="/expand-occ/{code}"
-               hx-target="#occ-{code}"
-               hx-swap="outerHTML">
-               {ime}
-            </a>
-          </td>
-        </tr>
-        """
+    html = f'<tr id="rod-{rod_slug}"><td class="rod-cell">'
+    html += f'<a class="rod-link" href="#" hx-get="/skupine/{rod_slug}" hx-target="#rod-{rod_slug}" hx-swap="outerHTML">{rod}</a>'
+    html += '</td><td></td><td></td></tr>'
     return html
 
-@app.get("/collapse-group/{group_slug}", response_class=HTMLResponse)
-def collapse_group(request: Request, group_slug: str):
-    """Klik na (Sakrij) skupine – vraća skupinu u collapsed stanje."""
-    group = get_skupina_by_slug(group_slug)
-    if not group:
+@app.get("/zanimanja/{skupina_slug}", response_class=HTMLResponse)
+def zanimanja_skupina(request: Request, skupina_slug: str):
+    skupina = get_skupina_by_slug(skupina_slug)
+    if not skupina:
         raise HTTPException(status_code=404, detail="Skupina nije pronađena")
-    return f"""
-    <tr id="skupina-{group_slug}" class="group-row">
-      <td style="padding-left:20px;">
-        <a class="skupina-link" href="#"
-           hx-get="/expand-group/{group_slug}"
-           hx-target="#skupina-{group_slug}"
-           hx-swap="outerHTML">
-           {group}
-        </a>
-      </td>
-    </tr>
-    """
+    zanimanja = skupine.get(skupina, [])
+    html = f'<tr id="skupina-{skupina_slug}"><td class="skupina-cell"></td><td class="skupina-cell">'
+    html += f'<a class="skupina-link" href="#" hx-get="/sakrij-skupinu/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
+    html += '<ul>'
+    for z in zanimanja:
+        sifra = z["sifra"]
+        ime = z["ime"]
+        html += f'<li><div id="blok-{sifra}" class="zanimanje-div">'
+        html += f'<a class="zanimanje-link" href="#" hx-get="/toggle/{sifra}" hx-target="#blok-{sifra}" hx-swap="outerHTML">{ime}</a>'
+        html += '</div></li>'
+    html += '</ul></td><td></td></tr>'
+    return html
 
-# -------------------------------------------
-# Zanimanja – collapsed i expanded (prikazuje opis)
-# -------------------------------------------
+@app.get("/sakrij-skupinu/{skupina_slug}", response_class=HTMLResponse)
+def sakrij_skupinu(request: Request, skupina_slug: str):
+    skupina = get_skupina_by_slug(skupina_slug)
+    if not skupina:
+        raise HTTPException(status_code=404, detail="Skupina nije pronađena")
+    html = f'<tr id="skupina-{skupina_slug}"><td class="skupina-cell"></td><td class="skupina-cell">'
+    html += f'<a class="skupina-link" href="#" hx-get="/zanimanja/{skupina_slug}" hx-target="#skupina-{skupina_slug}" hx-swap="outerHTML">{skupina}</a>'
+    html += '</td><td></td></tr>'
+    return html
 
-@app.get("/expand-occ/{code}", response_class=HTMLResponse)
-def expand_occ(request: Request, code: str):
-    """Klik na zanimanje – prikazuje opis."""
+@app.get("/toggle/{code}", response_class=HTMLResponse)
+def toggle_opis(request: Request, code: str):
     if code not in zan_dict:
         raise HTTPException(status_code=404, detail="Zanimanje nije pronađeno")
     opis = zan_dict[code]["description"]
     ime = zan_dict[code]["ime"]
-    return f"""
-    <tr id="occ-{code}" class="occupation-row">
-      <td style="padding-left:20px;">
-        <span class="zanimanje-link">{ime}</span>
-        <a class="collapse-occ" href="#"
-           hx-get="/collapse-occ/{code}"
-           hx-target="#occ-{code}"
-           hx-swap="outerHTML">
-           (Sakrij opis)
-        </a>
-        <div class="opis">{opis}</div>
-      </td>
-    </tr>
-    """
+    html = f'<tr id="blok-{code}"><td class="zanimanje-cell"></td><td class="zanimanje-cell"></td><td class="opis-cell">'
+    html += f'<a class="zanimanje-link occupation-toggle" style="text-decoration:none; color:black;" href="#" hx-get="/sakrij/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a>'
+    html += f"<div class='opis'>{opis}</div></td></tr>"
+    return html
 
-@app.get("/collapse-occ/{code}", response_class=HTMLResponse)
-def collapse_occ(request: Request, code: str):
-    """Klik na (Sakrij opis) – vraća zanimanje u collapsed stanje."""
+@app.get("/sakrij/{code}", response_class=HTMLResponse)
+def sakrij_opis(request: Request, code: str):
     if code not in zan_dict:
         raise HTTPException(status_code=404, detail="Zanimanje nije pronađeno")
     ime = zan_dict[code]["ime"]
-    return f"""
-    <tr id="occ-{code}" class="occupation-row">
-      <td style="padding-left:20px;">
-        <a class="zanimanje-link" href="#"
-           hx-get="/expand-occ/{code}"
-           hx-target="#occ-{code}"
-           hx-swap="outerHTML">
-           {ime}
-        </a>
-      </td>
-    </tr>
-    """
+    html = f'<tr id="blok-{code}"><td class="zanimanje-cell"></td><td class="zanimanje-cell"></td><td class="opis-cell">'
+    html += f'<a class="zanimanje-link occupation-toggle" style="text-decoration:none; color:black;" href="#" hx-get="/toggle/{code}" hx-target="#blok-{code}" hx-swap="outerHTML">{ime}</a></td></tr>'
+    return html
 
 @app.get("/test", response_class=HTMLResponse)
 def test(request: Request):
-    return "<tr><td>Test uspješan!</td></tr>"
+    return "<div id='output'>Test uspješan!</div>"
