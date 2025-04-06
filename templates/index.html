@@ -1,119 +1,56 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-    <meta charset="UTF-8">
-    <title>NKZ – Zanimanja</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 2em;
-            background: #f8f8f8;
-            color: black;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        /* Rodovi */
-        .rod-cell {
-            padding-left: 0;
-        }
-        .rod-link {
-            color: black;
-            font-size: 1.2em;
-            font-weight: bold;
-            text-decoration: none;
-            display: block; /* Da zauzme cijelu širinu ćelije */
-        }
-        /* Skupine */
-        .skupine-cell-container {
-            padding-left: 20px;
-        }
-        .skupine-list {
-            list-style-type: none;
-            padding-left: 0;
-            margin: 0;
-        }
-        .skupina-link {
-            color: black;
-            font-size: 1.1em;
-            font-weight: bold;
-            text-decoration: none;
-            display: block; /* Da zauzme cijelu širinu kontejnera */
-        }
-        /* Zanimanja */
-        .zanimanja-cell-container {
-            padding-left: 40px;
-        }
-        .zanimanja-list {
-            list-style-type: none;
-            padding-left: 0;
-            margin: 0;
-        }
-        .zanimanje-link {
-            color: black;
-            font-size: 1em;
-            text-decoration: none;
-            display: block; /* Da zauzme cijelu širinu kontejnera */
-        }
-        /* Opis */
-        .opis-container {
-            padding-left: 60px;
-        }
-        .opis {
-            background: #f0f0f0;
-            padding: 10px;
-            font-style: italic;
-            border-radius: 5px;
-            color: black;
-            margin-top: 5px;
-        }
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        li {
-            margin: 4px 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Nacionalna klasifikacija zanimanja 2010 (NKZ10)</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline';">
+  <style>
+    .tables-container {
+      margin: 0px 70px 500px 30px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: -1px; /* da se ne vidi zadebljanje na preklopu dvije tabele */
+    }
+    body {
+      font-family: "Open Sans", Arial, sans-serif;
+    }
+    tr, th, td {
+      border: 1px solid black;
+      padding: 6px;
+    }
+    .rod-row { background-color: rgba(242,80,34,0.5);}
+    .rod-link { color: black; padding: 7px 0px 7px 10px; font-size: 1.2em; font-weight: bold; text-decoration: none; cursor: pointer; text-align: left;}
+    .group-row { background-color: rgba(0,120,215,0.5);}
+    .skupina-link { color: black; padding-left: 20px; font-size: 1.1em; font-weight: bold; text-decoration: none; cursor: pointer; }
+    .occupation-row { background-color: #fff; padding-left: 30px;}
+    .zanimanje-link { color: black; padding-left: 0px; font-size: 1em; text-decoration: none; cursor: pointer; }
+    .opis { margin-top: 4px; background: #f5f5f5; padding: 5px 10px 5px 10px; border: 1px solid #ccc; color: black; text-align: justify; font-size: 0.95em;}
+  </style>
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </head>
 <body>
-    <h1>Nacionalna klasifikacija zanimanja</h1>
-    <table>
-        <tbody>
-            {% for item in rods %}
-                <tr id="rod-{{ item.slug }}">
-                    <td class="rod-cell">
-                        <a class="rod-link"
-                           href="#"
-                           hx-get="/skupine/{{ item.slug }}"
-                           hx-target="#rod-{{ item.slug }}"
-                           hx-swap="outerHTML">
-                            {{ item.rod }}
-                        </a>
-                    </td>
-                    <td class="skupine-cell-container">
-                        </td>
-                    <td class="zanimanja-cell-container">
-                        </td>
-                </tr>
-            {% endfor %}
-        </tbody>
+  <h1 style="padding-left:50px;">Nacionalna klasifikacija zanimanja 2010 (NKZ10)</h1>
+  <div  class="tables-container">
+  {% for item in rods %}
+    <!-- Svaki rod je prikazan kao zasebna tablica -->
+    <table id="table-{{ item.slug }}">
+      <thead>
+        <tr class="rod-row">
+          <th class="rod-link"
+              hx-get="/expand-rod/{{ item.slug }}"
+              hx-target="#table-{{ item.slug }}"
+              hx-swap="outerHTML">
+              {{ item.rod }}
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbody-group-{{ item.slug }}">
+      <!-- u početu se vidi samo naslov tabele - rod-->
+      </tbody>
     </table>
-
-    <div class="blok" id="test" style="margin-top: 20px;">
-        <a href="#" hx-get="/test" hx-target="#test" hx-swap="outerHTML">Minimalni test</a>
-    </div>
-
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
-    <script>
-        console.log("htmx:", window.htmx);
-    </script>
+  {% endfor %}
+  </div>
 </body>
 </html>
