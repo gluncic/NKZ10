@@ -28,19 +28,9 @@ def get_skupina_by_slug(slug: str) -> str:
             return skupina
     return None
 
-with open("NKZ_descriptions_chatGPT4omini.json", encoding="utf-8") as f:
+with open("NKZ_descriptions_chatGPT4o.json", encoding="utf-8") as f:
     zan_dict = json.load(f)
 
-# rodovi = {}
-# skupine = {}
-# for sifra, data in zan_dict.items():
-#     rod = data["rod"]
-#     skupina = data["skupina"]
-#     rodovi.setdefault(rod, set()).add(skupina)
-#     skupine.setdefault(skupina, []).append({
-#         "sifra": sifra,
-#         "ime": data["ime"]
-#     })
 rodovi = {}
 skupine = {}
 for sifra, data in zan_dict.items():
